@@ -28,7 +28,7 @@
 	icon = 'icons/obj/weapons.dmi'
 	icon_state = "tacknife"
 	desc = "Knife designed specially for throwing"
-	force_divisor = 0.2
+	force_divisor = 0.15
 	thrown_force_divisor = 0.80
 	throw_speed = 8
 	throw_range = 15
