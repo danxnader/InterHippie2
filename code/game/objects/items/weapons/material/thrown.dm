@@ -22,3 +22,16 @@
 
 /obj/item/weapon/material/star/ninja
 	default_material = "uranium"
+
+/obj/item/weapon/material/knife/throwing
+	name = "throwing knife"
+	icon = 'icons/obj/weapons.dmi'
+	icon_state = "tacknife"
+	desc = "Knife designed specially for throwing"
+	force_divisor = 0.2
+	thrown_force_divisor = 0.80
+	throw_speed = 8
+	throw_range = 15
+	sharp = 1
+	edge = 1
+	randpixel = 12
