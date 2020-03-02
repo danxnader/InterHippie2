@@ -10,9 +10,9 @@
 		hud_data = target.species.hud
 
 	if(hud_data.icon)
-		ui_style = 'icons/mob/screen/orange_luna.dmi'//hud_data.icon
+		ui_style = 'icons/mob/screen/dark.dmi'//hud_data.icon
 	else
-		ui_style = 'icons/mob/screen/orange_luna.dmi'
+		ui_style = 'icons/mob/screen/dark.dmi'
 
 	src.adding = list()
 	src.other = list()
@@ -26,7 +26,7 @@
 	using = new /obj/screen() //Right hud bar
 	using.dir = SOUTH
 	using.icon = ui_style
-	using.icon_state = "bg" 
+	using.icon_state = "bg"
 	using.screen_loc = "EAST+1,SOUTH to EAST+1,NORTH"
 	using.layer = UNDER_HUD_LAYER
 	adding += using
@@ -82,11 +82,38 @@
 		using.alpha = ui_alpha
 		src.adding += using
 
+	if(ishuman(mymob))
+		var/mob/living/carbon/human/H = mymob
+		H.hovertext = new /obj/screen/text/atm
+		H.hovertext.maptext = ""
+		H.hovertext.maptext_height = 100
+		H.hovertext.maptext_width = 480
+		H.hovertext.screen_loc = "CENTER-7, CENTER+7"
+		hud_elements |= H.hovertext
+
 	// Draw the attack intent dialogue.
 	if(hud_data.has_a_intent)
 
 		using = new /obj/screen/intent()
 		using.icon = ui_style
+		src.adding += using
+		action_intent = using
+
+		hud_elements |= using
+
+	// Draw the combat intent dialogue.
+	if(hud_data.has_c_intent)
+
+		using = new /obj/screen/combat()
+		src.adding += using
+		action_intent = using
+
+		hud_elements |= using
+
+	// Draw the skill/family dialogue.
+	if(hud_data.has_skills_family)
+
+		using = new /obj/screen/skills_family()
 		src.adding += using
 		action_intent = using
 
@@ -285,6 +312,14 @@
 	mymob.stamina_icon.screen_loc = ui_stamina
 	hud_elements |= mymob.stamina_icon
 
+	mymob.film_grain = new()
+	mymob.film_grain.icon = 'icons/effects/static.dmi'
+	mymob.film_grain.icon_state = "7 light"
+	mymob.film_grain.screen_loc = ui_entire_screen
+	mymob.film_grain.alpha = 130
+	mymob.film_grain.layer = FULLSCREEN_LAYER
+	mymob.film_grain.mouse_opacity = 0
+	hud_elements |= mymob.film_grain
 
 	mymob.rest = new /obj/screen()
 	mymob.rest.name = "rest"
@@ -342,12 +377,12 @@
 	mymob.combat_icon.screen_loc = ui_combat
 	hud_elements |= mymob.combat_icon
 
-	mymob.combat_intent_icon = new /obj/screen()//combat mode
-	mymob.combat_intent_icon.name = "combat intent"
-	mymob.combat_intent_icon.icon = ui_style//'icons/mob/screen/dark.dmi'
-	mymob.combat_intent_icon.icon_state = "dodge"
-	mymob.combat_intent_icon.screen_loc = ui_combat_intent
-	hud_elements |= mymob.combat_intent_icon
+	mymob.dodge_intent_icon = new /obj/screen()//dodge or parry
+	mymob.dodge_intent_icon.name = "dodge intent"
+	mymob.dodge_intent_icon.icon = ui_style//'icons/mob/screen/dark.dmi'
+	mymob.dodge_intent_icon.icon_state = "dodge"
+	mymob.dodge_intent_icon.screen_loc = ui_combat_intent
+	hud_elements |= mymob.dodge_intent_icon
 
 	mymob.surrender = new /obj/screen()
 	mymob.surrender.name = "surrender"

@@ -310,6 +310,11 @@ meteor_act
 	if(user.skillcheck(user.skills["melee"],0,0, "Crit check") == CRIT_SUCCESS)
 		resolve_critical_hit()
 
+	//Blood to gold
+	if(GLOB.all_religions["Gozag Ym Sagoz"].bloodgold)
+		var/datum/transaction/T = new("Gozag Ym Sagoz", "Blood money", -effective_force)
+		spawn_money(round(effective_force),src.loc,null)
+		mind.initial_account.do_transaction(T)
 	return 1
 
 /mob/living/carbon/human/proc/attack_bloody(obj/item/W, mob/living/attacker, var/effective_force, var/hit_zone)
@@ -619,7 +624,7 @@ meteor_act
 				src.throw_at(target, rand(1,3), src.throw_speed)
 			if(user.lying)
 				to_chat(user, too_high_message)
-					return
+				return
 
 		if(BP_MOUTH)//If we aim for the mouth then we kick their teeth out.
 			if(lying)

@@ -49,6 +49,7 @@
 #define COLOR_CYAN_BLUE        "#3366cc"
 #define COLOR_LIGHT_CYAN       "#66ccff"
 #define COLOR_PAKISTAN_GREEN   "#006600"
+#define COLOR_NULLGLASS        "#d8d4ea"
 
 #define	PIPE_COLOR_GREY        "#ffffff"	//yes white is grey
 #define	PIPE_COLOR_RED         "#ff0000"
@@ -60,3 +61,9 @@
 #define	PIPE_COLOR_ORANGE      "#b95a00"
 
 #define COLOR_BLOOD_HUMAN "#a10808"
+
+#define COLOR_DARKMODE_BACKGROUND "#202020"
+#define COLOR_DARKMODE_DARKBACKGROUND "#171717"
+#define COLOR_DARKMODE_TEXT "#a4bad6"
+#define COLOR_WEBHOOK_DEFAULT 0x8bbbd5
+#define COLOR_SURGERY_BLUE     "#e0f2f6"

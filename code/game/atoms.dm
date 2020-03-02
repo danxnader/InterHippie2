@@ -451,7 +451,7 @@ its easier to just keep the beam vertical.
 		return 0
 
 	var/obj/occupied = turf_is_crowded()
-	if(occupied)
+	if(occupied && (occupied != user))
 		to_chat(user, "<span class='danger'>There's \a [occupied] in the way.</span>")
 		return 0
 	return 1
@@ -585,8 +585,25 @@ its easier to just keep the beam vertical.
 
 	//Nice, we can jump, let's do that then.
 	playsound(user, user.gender == MALE ? 'sound/effects/jump_male.ogg' : 'sound/effects/jump_female.ogg', 25, 0, 1)
-	user.visible_message("[user] jumps.")
-	user.adjustStaminaLoss(rand(20,40))//Jumping is exhausting.
-	user.throw_at(target, 5, 0.5, user)
+	user.visible_message("<span class='danger'>[user.name] jumps.</span>", \
+					"<span class='warning'> I jump at the [loc]!</span>")
+	user.adjustStaminaLoss(rand(30,50))//Jumping is exhausting.
+	user.throw_at(target, 3, 0.5, user)
 	user.setClickCooldown(DEFAULT_SLOW_COOLDOWN)
 
+/atom/proc/get_color()
+	return color
+
+/obj/screen/text/atm
+
+/client/MouseEntered(var/atom/a)
+	if(mob && ishuman(mob) && mob.get_preference_value(/datum/client_preference/show_item_names) == GLOB.PREF_YES)
+		var/mob/living/carbon/human/H = mob
+		if(a.mouse_opacity)  // i spread this out to make it more "readable"
+			H.hovertext.maptext = "<center><span style=\"\
+			color: #226c09; \
+			font-family: 'Arial Black', Gadget, sans-serif; \
+			\">[uppertext(a.name)]\
+			</span></center>"
+		else
+			H.hovertext.maptext = ""  // ui is blank

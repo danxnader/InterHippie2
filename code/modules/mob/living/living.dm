@@ -187,7 +187,7 @@ default behaviour is:
 /mob/living/verb/succumb()
 	set name = "Succumb"
 	set category = "IC"
-	if ((src.health < src.maxHealth/2) || is_asystole()) // Health below half of maxhealth, or asystole.
+	if ((src.health < src.maxHealth * 0.3) || is_asystole()) // Health below half of maxhealth, or asystole.
 		src.adjustBrainLoss(src.health + src.maxHealth * 2) // Deal 2x health in BrainLoss damage, as before but variable.
 		updatehealth()
 		to_chat(src, "<span class='notice'>You have given up life and succumbed to death.</span>")
@@ -582,7 +582,6 @@ default behaviour is:
 														X.existing_dirs += newdir
 														X.overlays.Add(image('icons/effects/blood.dmi',trail_type,dir = newdir))
 
-								/*
 								//pull damage with injured people
 									if(prob(25))
 										M.adjustBruteLoss(1)
@@ -599,8 +598,6 @@ default behaviour is:
 												var/blood_volume = round(H.vessel.get_reagent_amount(/datum/reagent/blood))
 												if(blood_volume > 0)
 													H.vessel.remove_reagent(/datum/reagent/blood, 1)
-
-								*/
 
 						step(pulling, get_dir(pulling.loc, T))
 						if(t)
@@ -660,7 +657,7 @@ default behaviour is:
 
 	if(gaspsound)
 		playsound(src, gaspsound, 25, 0, 1)
-	if(!statcheck(stats["con"],15,"I'm too tried to keep going...","con"))
+	if(!statcheck(stats["con"],15,"I'm too tired to keep going.","con"))
 		Weaken(5)
 	setStaminaLoss(185)  //Give them a bit of stamina back to avoid calling this multiple times
 

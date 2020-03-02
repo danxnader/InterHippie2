@@ -590,7 +590,9 @@
 				//to_chat(src, "<span class='warning'>[species.halloss_message_self]</span>")
 				src.visible_message("<span class='warning'><B>[src]</B> gives into the pain!</span>")//("<B>[src]</B> [species.halloss_message].")
 			Paralyse(10)
-
+		if(health <= maxHealth * 0.4) //This should be 80 total health
+			Paralyse(10)
+			adjustBrainLoss(3)
 		if(paralysis || sleeping)
 			blinded = 1
 			set_stat(UNCONSCIOUS)
@@ -721,6 +723,7 @@
 		//Fire and Brute damage overlay (BSSR)
 		var/hurtdamage = src.getBruteLoss() + src.getFireLoss() + damageoverlaytemp
 		damageoverlaytemp = 0 // We do this so we can detect if someone hits us or not.
+		var/obj/screen/grain = film_grain
 		if(hurtdamage)
 			var/severity = 0
 			switch(hurtdamage)
@@ -731,6 +734,9 @@
 				if(70 to 85)		severity = 5
 				if(85 to INFINITY)	severity = 6
 			overlay_fullscreen("brute", /obj/screen/fullscreen/brute, severity)
+			if(grain)
+				grain.icon_state = "9 medium"
+				grain.alpha = 130
 		else
 			clear_fullscreen("brute")
 
@@ -745,7 +751,7 @@
 					if(100 to INFINITY)		healths.icon_state = "health6"
 					if(80 to 100)			healths.icon_state = "health5"
 					if(60 to 80)			healths.icon_state = "health4"
-					//if(60 to 80)			healths.icon_state = "health3"
+					if(60 to 80)			healths.icon_state = "health3"
 					if(40 to 60)			healths.icon_state = "health2"
 					if(20 to 40)			healths.icon_state = "health1"
 					if(0 to 20)				healths.icon_state = "health0"
@@ -970,37 +976,37 @@
 	if(shock_stage == 40)
 		custom_pain("[pick("The pain is excruciating", "Please, just end the pain", "Your whole body is going numb")]!", 0)
 		src.agony_moan()
-		//emote("moan")
+		emote("moan")
 
 	if (shock_stage >= 60)
 		//if(shock_stage == 60)
-		//	visible_message("<b>[src]</b>'s body becomes limp.")
+		//visible_message("<b>[src]</b>'s body becomes limp.")
 		if (prob(2))
 			custom_pain("[pick("The pain is excruciating", "Please, just end the pain")]!", shock_stage, nohalloss = 0)
 			adjustStaminaLoss(20)
-		//	flash_weak_pain()
-		//	stuttering = max(stuttering, 5)
+			flash_weak_pain()
+			stuttering = max(stuttering, 5)
 
 	if(shock_stage >= 80)
 		if (prob(5))
 			custom_pain("[pick("The pain is excruciating", "Please, just end the pain")]!", shock_stage, nohalloss = 0)
 			adjustStaminaLoss(20)
-		//	flash_weak_pain()
-		//	stuttering = max(stuttering, 5)
+			flash_weak_pain()
+			stuttering = max(stuttering, 5)
 
 	if(shock_stage >= 120)
 		if (prob(2))
-			custom_pain("[pick("You black out", "You feel like you could die any moment now", "You're about to lose consciousness")]!", shock_stage, nohalloss = 0)
+			custom_pain("[pick("You black out", "You feel like you could die any moment now", "You're about to lose consciousness")].", shock_stage, nohalloss = 0)
 			Paralyse(5)
-		//	flash_pain()
-		//	stuttering = max(stuttering, 5)
+			flash_pain()
+			stuttering = max(stuttering, 5)
 
 	if(shock_stage == 150)
-		//visible_message("<b>[src]</b> can no longer stand, collapsing!")
+		visible_message("<b>[src]</b> can no longer stand, collapsing and clutching at his heart!")
 		adjustStaminaLoss(20)//Weaken(20)
 
-	//if(shock_stage >= 150)
-	//	Weaken(20)
+	if(shock_stage >= 150)
+		Weaken(20)
 
 /*
 	Called by life(), instead of having the individual hud items update icons each tick and check for status changes

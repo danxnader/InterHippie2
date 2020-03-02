@@ -21,7 +21,7 @@ var/global/datum/controller/occupations/job_master
 		occupations = list()
 		occupations_by_type = list()
 		occupations_by_title = list()
-		var/list/all_jobs = list(/datum/job/assistant) | GLOB.using_map.allowed_jobs
+		var/list/all_jobs = GLOB.using_map.allowed_jobs | /datum/job/assistant
 		if(!all_jobs.len)
 			log_error("<span class='warning'>Error setting up jobs, no job datums found!</span>")
 			return 0
@@ -91,6 +91,8 @@ var/global/datum/controller/occupations/job_master
 				return 0
 			if(job.minimum_character_age && (player.client.prefs.age < job.minimum_character_age))
 				return 0
+			if(job.sex_lock && player.client.prefs.gender != job.sex_lock)
+				return 0
 			if(jobban_isbanned(player, rank))
 				return 0
 			if(!job.player_old_enough(player.client))
@@ -128,6 +130,9 @@ var/global/datum/controller/occupations/job_master
 			if(!job.player_old_enough(player.client))
 				Debug("FOC player not old enough, Player: [player]")
 				continue
+			if(job.sex_lock && player.client.prefs.gender  != job.sex_lock)
+				Debug("FOC character wrong gender, Player: [player]")
+				continue
 			if(job.minimum_character_age && (player.client.prefs.age < job.minimum_character_age))
 				Debug("FOC character not old enough, Player: [player]")
 				continue
@@ -163,6 +168,9 @@ var/global/datum/controller/occupations/job_master
 
 			if(!job.player_old_enough(player.client))
 				Debug("GRJ player not old enough, Player: [player]")
+				continue
+
+			if(job.sex_lock && player.client.prefs.gender  != job.sex_lock)
 				continue
 
 			if((job.current_positions < job.spawn_positions) || job.spawn_positions == -1)
@@ -308,6 +316,10 @@ var/global/datum/controller/occupations/job_master
 
 					if(!job.player_old_enough(player.client))
 						Debug("DO player not old enough, Player: [player], Job:[job.title]")
+						continue
+
+					if(job.sex_lock && job.sex_lock != player.client.prefs.gender)
+						Debug("DO player wrong gender, Player: [player], Job:[job.title]")
 						continue
 
 					// If the player wants that job on this level, then try give it to him.
@@ -519,11 +531,11 @@ var/global/datum/controller/occupations/job_master
 					to_chat(H, "<span class='danger'>Try as you might... you just can't seem to remember the prayer today. This won't look good to the Arbiters.")
 				if(rank == "Supreme Arbiter")
 					H.mind.prayer = accepted_prayer
-					H.verbs += /mob/living/proc/accuse_heretic
-					H.verbs += /mob/living/proc/question_heretic
+					H.verbs += /mob/living/proc/interrogate
 			else
 				//Pick an old god other then the template
 				//to_world("RELIGION TESTING FIX THIS")
+				//H.religion = "Your god here"
 				H.religion = pick(GLOB.all_religions - ILLEGAL_RELIGION - LEGAL_RELIGION)
 				to_chat(H, "You are a worshipper of the <b><font color='red'>[H.religion]</font>. It is not a legal religion of this land. Do not be caught by the <b>Inquisition</b>. Check your notes for who your brothers and sisters are.")
 				H.verbs += /mob/living/proc/make_shrine
@@ -535,6 +547,13 @@ var/global/datum/controller/occupations/job_master
 				if(prob(5))
 					H.mind.prayer = accepted_prayer
 					to_chat(H, "<span class='notice'>You can't believe your luck, you've managed to pick up on the selected prayer for today. It's: <b>[H.mind.prayer]</b> Remember this prayer, and Gods save you from the Arbiters.\n</span>")
+				var/list/pickable_spells = list()
+				for(var/S in GLOB.all_spells)
+					if(GLOB.all_spells[S].old_god == H.religion)
+						pickable_spells += GLOB.all_spells[S]
+				var/datum/old_god_spell/new_spell = pick(pickable_spells)
+				to_chat(H, "You can only recall a single incantation.  It is the <b><font color='red'>[new_spell.name]</font> spell.  The incantation is <b><font color='red'>[new_spell.phrase]</font>")
+				H.mind.store_memory("[new_spell.name] Incantation: \"[new_spell.phrase]\"")
 
 		
 		BITSET(H.hud_updateflag, ID_HUD)

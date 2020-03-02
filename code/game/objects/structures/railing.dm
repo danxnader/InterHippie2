@@ -17,7 +17,7 @@
 /obj/structure/railing
 	name = "railing"
 	desc = "A standard steel railing. Prevents human stupidity."
-	icon = 'maps/dreyfus/icons/railing.dmi'
+	icon = 'icons/obj/railing.dmi'
 	density = 1
 	throwpass = 1
 	//layer = 3.2//Just above doors 	//Layers mean nothing.
@@ -34,7 +34,12 @@
 	//var/RightSide = list(0,0,0)
 	var/check = 0
 
-/obj/structure/railing/New(loc, constructed=0)
+/obj/structure/railing/grey	
+	name = "grey railing"	
+	desc = "A standard steel railing. Prevents stupid people from falling to their doom."	
+	icon_state = "grey_railing0"
+
+/obj/structure/railing/Initialize(loc, constructed=0)
 	..()
 	if (constructed)	//player-constructed railings
 		anchored = 0
@@ -260,7 +265,7 @@
 			update_icon()
 			return
 
-/* // Handle harm intent grabbing/tabling.
+ // Handle harm intent grabbing/tabling.
 	if(istype(W, /obj/item/grab) && get_dist(src,user)<2)
 		var/obj/item/grab/G = W
 		if (istype(G.affecting, /mob/living))
@@ -287,7 +292,7 @@
 				G.affecting.Weaken(5)
 				visible_message("<span class='danger'>[G.assailant] throws [G.affecting] over \the [src]!</span>")
 			qdel(W)
-			return*/
+			return
 
 	else
 		playsound(loc, 'sound/effects/grillehit.ogg', 50, 1)

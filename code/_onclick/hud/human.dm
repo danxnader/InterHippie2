@@ -54,6 +54,14 @@
 		using.alpha = ui_alpha
 		src.adding += using
 
+		H.hovertext = new /obj/screen/text/atm
+		H.hovertext.maptext = ""
+		H.hovertext.maptext_height = 100
+		H.hovertext.maptext_width = 480
+		H.hovertext.screen_loc = "CENTER-7, CENTER+7"
+		hud_elements |= H.hovertext
+
+
 	// Draw the attack intent dialogue.
 	if(hud_data.has_a_intent)
 
@@ -62,6 +70,16 @@
 		action_intent = using
 
 		hud_elements |= using
+
+	// Draw the combat intent dialogue.
+	if(hud_data.has_a_intent)
+
+		using = new /obj/screen/combat()
+		src.adding += using
+		action_intent = using
+
+		hud_elements |= using
+	
 
 	if(hud_data.has_m_intent)
 		using = new /obj/screen()
@@ -265,6 +283,17 @@
 	mymob.fixeye.name = "fixeye"
 	mymob.fixeye.screen_loc = ui_fixeye
 	hud_elements |= mymob.fixeye
+
+	// draw the aesthetic overlay.
+
+	mymob.film_grain = new()
+	mymob.film_grain.icon = 'icons/effects/static.dmi'
+	mymob.film_grain.icon_state = "9 medium"
+	mymob.film_grain.screen_loc = ui_entire_screen
+	mymob.film_grain.alpha = 118
+	mymob.film_grain.layer = FULLSCREEN_LAYER
+	mymob.film_grain.mouse_opacity = 0
+	hud_elements |= mymob.film_grain
 
 	mymob.pain = new /obj/screen( null )
 	mymob.pain.icon = ui_style

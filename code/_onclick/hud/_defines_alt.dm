@@ -52,7 +52,9 @@
 #define ui_dropbutton "SOUTH-1,7"
 #define ui_drop_throw "SOUTH-1,8"
 #define ui_pull "SOUTH-1,11"//12"
-#define ui_atk "SOUTH-1, 12"//atk_intents
+#define ui_atk "SOUTH-1, 12"//Dodge intents
+#define ui_atk_intents "south-1, 9" //atk_intents
+#define ui_skills_family "SOUTH-1,10"
 #define ui_resist "EAST+1,SOUTH-1"
 #define ui_acti "SOUTH-1,8"//"SOUTH-1,8"
 #define ui_combat "SOUTH-1,	14"//COMBAT MODE!
@@ -136,9 +138,6 @@
 
 #define ui_head "SOUTH+1,2"
 
-//Attack intent
-#define ui_att_int "SOUTH-1,9"
-
 //#define ui_swapbutton "6:-16,1:5" //Unused
 
 //#define ui_headset "SOUTH,8"
@@ -153,6 +152,7 @@
 #define ui_spell_master "EAST-1:16,NORTH-1:16"
 #define ui_genetic_master "EAST-1:16,NORTH-3:16"
 
+#define ui_hovertext "CENTER-7, CENTER+7"
 
 
 /***********************************************************************************

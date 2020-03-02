@@ -1,31 +1,33 @@
 /datum/map/frontier
 	allowed_jobs = list(
-						/datum/job/assistant,
 						/datum/job/captain,
 						/datum/job/hop,
-						/datum/job/doctor,
-						/datum/job/doctor/undertaker,
-						/datum/job/medassist,
+						/datum/job/supreme_arbiter,
+						/datum/job/arbiter,
+						///datum/job/medassist
 						/datum/job/hos,
 						/datum/job/officer,
 						/datum/job/detective,
+						/datum/job/doctor,
+						/datum/job/doctor/undertaker,
+						/datum/job/rd,
+						/datum/job/scientist,
 						/datum/job/qm,
-						/datum/job/engineer,
 						/datum/job/cargo_tech,
 						/datum/job/cargo_tech/machinist,
 						/datum/job/mining,
-						/datum/job/ouvrier,
 						/datum/job/chef,
-						///datum/job/chaplain,
+						/datum/job/hydro,
 						/datum/job/janitor,
-						/datum/job/arbiter,
-						/datum/job/supreme_arbiter
-						///datum/job/cadet,
-						///datum/job/jr_upkeep,
-						///datum/job/rd,
-						///datum/job/scientist,
-						///datum/job/raider,
+						/datum/job/engineer,
+						/datum/job/jester
+						///datum/job/assistant,
+						///datum/job/cadet
+						///datum/job/ouvrier
+						///datum/job/jr_upkeep
+						///datum/job/raider
 						///datum/job/raider/leader
+						///datum/job/chaplain,
 						)
 
 /datum/map/utopia
@@ -111,7 +113,8 @@
 						/datum/job/arbiter,
 						/datum/job/supreme_arbiter,
 						///datum/job/rd,
-						/datum/job/scientist
+						/datum/job/scientist,
+						/datum/job/jester
 						///datum/job/cadet,
 						)
 
@@ -125,8 +128,9 @@
 	alt_titles = null
 	social_class = SOCIAL_CLASS_MIN
 	total_positions = 10
+	department_flag = CIV
 	spawn_positions = 1
-
+	access = list(access_maint_tunnels)
 	equip(var/mob/living/carbon/human/H)
 		..()
 		//H.add_stats(rand(9,11), rand(9,11), rand(7,10))
@@ -140,6 +144,9 @@
 	ideal_character_age = 65
 	outfit_type = /decl/hierarchy/outfit/job/dreyfus/magistrate
 	social_class = SOCIAL_CLASS_MAX
+	department_flag = SPT
+	sex_lock = MALE
+
 
 	equip(var/mob/living/carbon/human/H)
 		..()
@@ -157,7 +164,9 @@
 	total_positions = 1
 	spawn_positions = 1
 	outfit_type = /decl/hierarchy/outfit/job/dreyfus/adjoint
+	department_flag = SPT
 	social_class = SOCIAL_CLASS_HIGH
+	sex_lock = MALE
 
 	equip(var/mob/living/carbon/human/H)
 		..()
@@ -165,7 +174,7 @@
 		H.generate_stats("int")
 
 /datum/job/rd
-	title = "Research Director"
+	title = "Court Magus"
 	supervisors = "the Count"
 	minimal_player_age = 21
 	economic_modifier = 9
@@ -174,6 +183,8 @@
 	spawn_positions = 1
 	outfit_type = /decl/hierarchy/outfit/job/science/superviseur
 	social_class = SOCIAL_CLASS_HIGH
+	sex_lock = MALE
+	department_flag = SCI
 	access = list(access_medical, access_medical_equip, access_morgue, access_genetics, access_heads, access_tox,
 			access_chemistry, access_virology, access_cmo, access_surgery, access_RC_announce,
 			access_keycard_auth, access_sec_doors, access_psychiatrist, access_eva, access_maint_tunnels, access_external_airlocks,
@@ -188,6 +199,9 @@
 			access_RC_announce, access_keycard_auth, access_tcomsat, access_gateway, access_xenoarch, access_network, access_rd, access_research, access_medical, access_morgue, access_medical_equip)
 
 	equip(var/mob/living/carbon/human/H)
+		H.set_species("Machine")
+		if(!H.religion_is_legal())//So that they can't be heretics.
+			H.religion = LEGAL_RELIGION
 		..()
 		//H.add_stats(rand(5,7), rand(5,8), rand(12,15))
 		H.generate_stats("int")
@@ -199,12 +213,16 @@
 	minimal_player_age = 19
 	economic_modifier = 2
 	ideal_character_age = 30
-	total_positions = 3
+	total_positions = 1
 	spawn_positions = 3
+	department_flag = SCI
 	access = list(access_robotics, access_tox, access_tox_storage, access_research, access_xenobiology, access_xenoarch, access_robotics)
 	minimal_access = list(access_tox, access_tox_storage, access_research, access_xenoarch, access_robotics)
 
 	equip(var/mob/living/carbon/human/H)
+		H.set_species("Machine")
+		if(!H.religion_is_legal())//So that they can't be heretics.
+			H.religion = LEGAL_RELIGION
 		..()
 		//H.add_stats(rand(5,7), rand(5,8), rand(10,14))
 		H.generate_stats("int")
@@ -213,6 +231,7 @@
 /datum/job/doctor
 	selection_color = "#633d63"
 	title = "Medical Doctor"
+	department_flag = MED
 	supervisors = "the Viscount"
 	minimal_player_age = 19
 	economic_modifier = 2
@@ -231,6 +250,7 @@
 
 /datum/job/doctor/undertaker
 	title = "Undertaker"
+	department_flag = MED
 	alt_titles = list()
 	total_positions = 1
 	spawn_positions = 1
@@ -253,6 +273,7 @@
 	spawn_positions = 1
 	selection_color = "#601c1c"
 	economic_modifier = 5
+	sex_lock = MALE
 	access = list(access_security, access_eva, access_sec_doors, access_brig, access_armory,
 			            access_forensics_lockers, access_morgue, access_maint_tunnels, access_all_personal_lockers,
 			            access_research, access_engine, access_mining, access_medical, access_construction, access_mailsorting,
@@ -279,6 +300,7 @@
 	total_positions = 4
 	spawn_positions = 4
 	economic_modifier = 3
+	sex_lock = MALE
 	access = list(access_security, access_eva, access_sec_doors, access_brig, access_maint_tunnels, access_morgue, access_external_airlocks)
 	minimal_access = list(access_security, access_eva, access_sec_doors, access_brig, access_maint_tunnels, access_external_airlocks)
 	minimal_player_age = 0
@@ -298,6 +320,7 @@
 	total_positions = 1
 	spawn_positions = 1
 	economic_modifier = 3
+	sex_lock = MALE
 	access = list(access_security, access_eva, access_sec_doors, access_maint_tunnels, access_morgue, access_external_airlocks, access_detoffice)
 	minimal_access = list(access_security, access_eva, access_sec_doors, access_maint_tunnels, access_external_airlocks, access_detoffice)
 	minimal_player_age = 0
@@ -319,6 +342,7 @@
 	ideal_character_age = 30
 	total_positions = 1
 	spawn_positions = 2
+	department_flag = SUP
 
 	equip(var/mob/living/carbon/human/H)
 		..()
@@ -334,6 +358,8 @@
 	total_positions = 3
 	spawn_positions = 3
 	alt_titles = null
+	sex_lock = MALE
+	department_flag = ENG
 	outfit_type = /decl/hierarchy/outfit/job/dreyfus/inge/inge
 	access = list(access_eva, access_engine, access_engine_equip, access_tech_storage, access_maint_tunnels, access_external_airlocks, access_construction, access_atmospherics, access_emergency_storage, access_tcomsat)
 	minimal_access = list(access_eva, access_engine, access_engine_equip, access_tech_storage, access_maint_tunnels, access_external_airlocks, access_construction, access_atmospherics, access_emergency_storage, access_tcomsat)
@@ -353,6 +379,8 @@
 	ideal_character_age = 21
 	total_positions = 2
 	spawn_positions = 2
+	department_flag = SUP
+	sex_lock = MALE
 	access = list(access_maint_tunnels, access_mailsorting, access_manufacturing, access_cargo, access_cargo_bot, access_mining, access_mining_station)
 	minimal_access = list(access_maint_tunnels, access_mailsorting, access_manufacturing, access_cargo, access_cargo_bot, access_mining, access_mining_station)
 
@@ -423,7 +451,7 @@
 	total_positions = 2
 	spawn_positions = 2
 	minimal_access = list(access_bar, access_kitchen, access_hydroponics)
-
+	department_flag = SRV
 	equip(var/mob/living/carbon/human/H)
 		..()
 		H.generate_stats("con")
@@ -452,7 +480,7 @@
 	ideal_character_age = 21
 	total_positions = 2
 	spawn_positions = 2
-
+	department_flag = SRV
 	equip(var/mob/living/carbon/human/H)
 		..()
 		//H.add_stats(rand(9,12), rand(9,12), rand(5,9))
@@ -465,9 +493,9 @@
 	department_flag = SRV
 	total_positions = 2
 	spawn_positions = 2
-	supervisors = "the head of personnel"
+	supervisors = "the overseer"
 	selection_color = "#515151"
-	minimal_access = list(access_hydroponics)
+	minimal_access = list(access_bar, access_kitchen, access_hydroponics)
 //	alt_titles = list("Hydroponicist")
 	outfit_type = /decl/hierarchy/outfit/job/service/gardener
 
@@ -476,39 +504,35 @@
 		H.generate_stats("con")
 		H.generate_skills("gardening")
 
+/datum/job/jester
+	title = "Jester"
+	department = "Service"
+	department_flag = SRV
+	total_positions = 1
+	spawn_positions = 1
+	supervisors = "The Viscount"
+	selection_color = "#852639"
+	minimal_access = list()
+	outfit_type = /decl/hierarchy/outfit/job/jester
 
-//CHURCH JOBS
-/datum/job/arbiter
-	title = "Arbiter"
-	department = "Civilian"
-	supervisors = "the Supreme Arbiter and Verina"
-	department_flag = CIV
-	total_positions = 2
-	spawn_positions = 2
-	economic_modifier = 3
-	selection_color = "#6161aa"
-	access = list(access_maint_tunnels, access_chapel_office)
-	minimal_access = list(access_maint_tunnels, access_chapel_office)
-	outfit_type = /decl/hierarchy/outfit/job/arbiter
-
-	equip(var/mob/living/carbon/human/H)//Peacekeeper stats.
+	equip(var/mob/living/carbon/human/H)
 		..()
-		if(!H.religion_is_legal())//So that they can't be heretics.
-			H.religion = LEGAL_RELIGION
-		//H.add_stats(rand(11,16), rand(10,14), rand(7,10))
-		H.generate_stats("str")
+		H.generate_stats("dex")
 		H.generate_skills("melee")
 
+
+//CHURCH JOBS
 //The inquisitor, aka the supreme arbiter.
 /datum/job/supreme_arbiter
 	title = "Supreme Arbiter"
 	department = "Civilian"
 	supervisors = "our glorious God, Verina"
-	department_flag = CIV
+	department_flag = CRH
 	total_positions = 1
 	spawn_positions = 1
 	economic_modifier = 5
 	selection_color = "#6161aa"
+	sex_lock = MALE
 	access = list(access_maint_tunnels, access_chapel_office)
 	minimal_access = list(access_maint_tunnels, access_chapel_office)
 	outfit_type = /decl/hierarchy/outfit/job/supreme_arbiter
@@ -519,6 +543,28 @@
 		if(!H.religion_is_legal())//So that they can't be heretics.
 			H.religion = LEGAL_RELIGION
 		//H.add_stats(rand(9,14), rand(8,12), rand(12,16))
+		H.generate_stats("str")
+		H.generate_skills("melee")
+
+/datum/job/arbiter
+	title = "Arbiter"
+	department = "Civilian"
+	supervisors = "the Supreme Arbiter and Verina"
+	department_flag = CRH
+	total_positions = 2
+	spawn_positions = 2
+	economic_modifier = 3
+	selection_color = "#6161aa"
+	sex_lock = MALE
+	access = list(access_maint_tunnels, access_chapel_office)
+	minimal_access = list(access_maint_tunnels, access_chapel_office)
+	outfit_type = /decl/hierarchy/outfit/job/arbiter
+
+	equip(var/mob/living/carbon/human/H)//Peacekeeper stats.
+		..()
+		if(!H.religion_is_legal())//So that they can't be heretics.
+			H.religion = LEGAL_RELIGION
+		//H.add_stats(rand(11,16), rand(10,14), rand(7,10))
 		H.generate_stats("str")
 		H.generate_skills("melee")
 

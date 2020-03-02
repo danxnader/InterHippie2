@@ -1,37 +1,4 @@
 //TOOLS
-//The scanner
-/obj/item/device/arbiter_scanner
-	icon = 'icons/obj/religion.dmi'
-	icon_state = "arbiterscanner"
-	name = "heretic scanner"
-	desc = "Inject someone with revelator and then scan them for results."
-	w_class = ITEM_SIZE_SMALL
-	force = 0
-	var/stored_info = 0
-	var/emagged = 0
-
-/obj/item/device/arbiter_scanner/emag_act(var/remaining_charges, var/mob/user)
-	if(!emagged)
-		emagged = 1
-		playsound(src, 'sound/effects/sparks3.ogg', 30, 0, -6)
-
-/obj/item/device/arbiter_scanner/attack(mob/living/L, mob/user)
-
-	if(!L.reagents.has_reagent("revelator"))
-		user.visible_message("<span class='notice'>The [src] beeps: \"ERROR: Subject needs revelator.\"</span>")
-
-	if(emagged)
-		stored_info = rand(1,2)
-		return
-
-	else if(do_after(user,30))
-		if(L.religion != LEGAL_RELIGION && !L.reagents.has_reagent("unrevelator"))//Unrevelator can trick the result.
-			stored_info = 2
-		else
-			stored_info = 1
-		user.visible_message("<span class='notice'>The [src] beeps: \"SCANNING COMPLETE.\"</span>")
-	..()
-
 //The brander
 /obj/item/weapon/brander
 	name = "branding device"
@@ -54,6 +21,9 @@
 				H.branded = brand
 				user.doing_something = 0
 				playsound(H, 'sound/items/Welder2.ogg', 40, 1, -1)
+				var/obj/item/organ/external/head = H.get_organ(BP_HEAD)
+				head.markings["brand"] = list("color" = "#330000", "datum" = new /datum/sprite_accessory/marking/brandface)
+				H.force_update_limbs()
 			else
 				user.doing_something = 0
 
@@ -75,18 +45,7 @@
 	anchored = 1
 
 /obj/machinery/arbiter_computer/attackby(var/obj/item/I, var/mob/user)
-	if(!istype(I,/obj/item/device/arbiter_scanner))
-		return
-
-	var/obj/item/device/arbiter_scanner/scanner = I
-	if(!scanner.stored_info)
-		visible_message("<span class='notice'>The [src] beeps: \"No data detected.\"</span>")
-		return
-	if(scanner.stored_info == 2)
-		visible_message("<span class='notice'>The [src] beeps: \"Subject <b>IS</b> a heretic.\"</span>")
-		return
-	else
-		visible_message("<span class='notice'>The [src] beeps: \"Subject is <b>NOT</b> a heretic.\"</span>")
+	visible_message("<span class='notice'>The [src] beeps and wizzes.\"</span>")
 
 /obj/machinery/arbiter_computer/attack_hand(mob/user as mob)
 	..()

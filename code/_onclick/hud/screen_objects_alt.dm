@@ -310,9 +310,9 @@
 	intent = I_DISARM
 	if(icon_x <= world.icon_size/2)
 		if(icon_y <= world.icon_size/2)
-			intent = I_HELP // I_HURT
+			intent = I_HURT
 		else
-			intent = I_HURT // I_HELP
+			intent = I_HELP
 	else if(icon_y <= world.icon_size/2)
 		intent = I_GRAB
 	update_icon()
@@ -320,6 +320,49 @@
 
 /obj/screen/intent/update_icon()
 	icon_state = "intent_[intent]"
+
+/obj/screen/combat
+	name = "Combat Intent"
+	icon = 'icons/mob/screen/dark.dmi'
+	icon_state = "atk_all"
+	screen_loc = ui_atk_intents
+	var/intent = I_STRONG
+
+/obj/screen/combat/Click(var/location, var/control, var/params)
+	var/list/P = params2list(params)
+	var/icon_x = text2num(P["icon-x"])
+	var/icon_y = text2num(P["icon-y"])
+	intent = I_STRONG
+	if(icon_x <= world.icon_size/2)
+		if(icon_y <= world.icon_size/2)
+			intent = I_DEFEND
+		else
+			intent = I_AIM
+	else if(icon_y <= world.icon_size/2)
+		intent = I_QUICK
+	update_icon()
+	usr.c_intent = intent
+
+/obj/screen/combat/update_icon()
+	icon_state = "[intent]"
+
+/obj/screen/skills_family
+	name = "skills_family"
+	icon = 'icons/mob/screen/dark.dmi'
+	icon_state = "skills_family"
+	screen_loc = ui_skills_family//ui_acti
+
+/obj/screen/skills_family/Click(var/location, var/control, var/params)
+	var/list/P = params2list(params)
+	var/icon_y = text2num(P["icon-y"])
+	if(icon_y <= world.icon_size/2)
+		if(ishuman(usr))
+			var/mob/living/carbon/human/H = usr
+			H.check_skills()
+	else
+		if(ishuman(usr))
+			var/mob/living/carbon/human/H = usr
+			H.check_family()
 
 /obj/screen/Click(location, control, params)
 	if(!usr)	return 1
@@ -516,11 +559,10 @@
 				var/mob/living/carbon/human/E = usr
 				if(E.defense_intent == I_PARRY)
 					E.defense_intent = I_DODGE
-					E.combat_intent_icon.icon_state = "dodge"
+					E.dodge_intent_icon.icon_state = "dodge"
 				else
 					E.defense_intent = I_PARRY
-					E.combat_intent_icon.icon_state = "parry"
-
+					E.dodge_intent_icon.icon_state = "parry"
 		if("fixeye")
 			usr.face_direction()
 			if(usr.facing_dir)

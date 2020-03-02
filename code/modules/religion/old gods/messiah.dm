@@ -2,6 +2,15 @@
 	name = MESSIAH
 	holy_item = new /obj/item/crucifix()
 	shrine = /obj/old_god_shrine/messiah_shrine
+	whisper_lines = list("Father, son, ghost", "Peace be with you my servant.", "Turn the other cheek.")
+	offering_items = list(/obj/item/weapon/flame/candle/, /obj/item/weapon/spacecash/bundle/c10, /obj/effect/decal/cleanable/blood/)
+
+/datum/religion/messiah/generate_random_phrase()
+		var/phrase = pick("Oh great [name] ", "Oh [name]. ", "[name], our Lord and Saviour. ")
+		phrase += pick("You forgive our sins. ", "You will come again. ", "You bathe our [pick("outpost","kingdom","cities")] in your mercy. ")
+		phrase += pick("Father son and holy ghost. ", "[name] save us all. ", "[name] guide us all. ")
+		phrase += "Amen."
+		return phrase
 
 /datum/old_god_spell/imbue
 	name = "Imbue"
@@ -17,6 +26,10 @@
 			for(var/obj/item/crucifix/x in user.contents)
 				x.empowered = TRUE
 				x.update_icon()
+
+	//We want to leave behind lit candles
+	spell_consume(var/list/spell_components)
+		return
 
 /datum/old_god_spell/blind
 	name = "blind"
@@ -43,7 +56,6 @@
 			target.verbs += /mob/living/proc/make_shrine
 			target.verbs += /mob/living/proc/praise_god
 			target.verbs.Remove(/mob/living/proc/recite_prayer)
-
 
 /obj/item/crucifix
 	name = "Crucifix"
@@ -78,8 +90,4 @@
 /obj/old_god_shrine/messiah_shrine
 	name = "Jes shrine"
 	shrine_religion = MESSIAH
-	icon_state = "woodcross"
-
-/obj/old_god_shrine/messiah_shrine/New()
-	..()
-	shrine_religion = GLOB.all_religions[MESSIAH]
+	icon_state = "messiah"

@@ -38,7 +38,7 @@
 
 	var/item_flags = 0 //Miscellaneous flags pertaining to equippable objects.
 
-	//var/heat_transfer_coefficient = 1 //0 prevents all transfers, 1 is invisible
+	var/heat_transfer_coefficient = 1 //0 prevents all transfers, 1 is invisible
 	var/gas_transfer_coefficient = 1 // for leaking gas from turf to mask and vice-versa (for masks right now, but at some point, i'd like to include space helmets)
 	var/permeability_coefficient = 1 // for chemicals/diseases
 	var/siemens_coefficient = 1 // for electrical admittance/conductance (electrocution checks and shit)
@@ -182,6 +182,8 @@
 /obj/item/proc/update_wield_icon()
 	if(wielded && wielded_icon)
 		item_state = wielded_icon
+	if(!wielded && wielded_icon)
+		qdel(src)
 
 /obj/item/proc/update_unwield_icon()//That way it doesn't interupt any other special icon_states.
 	if(wielded && wielded_icon)
@@ -313,11 +315,10 @@
 		if(!temp)
 			to_chat(user, "<span class='notice'>You try to use your hand, but realize it is no longer attached!</span>")
 			return
-	src.pickup(user)
 	if (istype(src.loc, /obj/item/weapon/storage))
 		var/obj/item/weapon/storage/S = src.loc
 		S.remove_from_storage(src)
-
+	src.pickup(user)
 	src.throwing = 0
 	if (src.loc == user)
 		if(!user.unEquip(src))

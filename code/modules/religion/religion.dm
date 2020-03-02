@@ -7,19 +7,25 @@
 	var/favor = 0
 	var/holy_item = null
 	var/shrine = null
-	var/religion_verbs = list()
 	var/followers = list()
 	var/territories = list()
+	var/datum/request/request = null
+	var/selectable_requests = list()
+	var/selectable_rewards = list()
+	var/selectable_punishments = list()
+	var/whisper_lines = list()
+	var/offering_items = list(/obj/item/weapon/paper)
 
+/datum/religion/New()
+	selectable_requests =  subtypesof(/datum/request)
+	selectable_rewards = subtypesof(/datum/reward)
+	selectable_punishments = subtypesof(/datum/punishment/)
 
 /datum/religion/machina
 	name = "Deo Machina"
 	holy_item = /obj/item/weapon/brander
-	favor = 0
-
-/datum/religion/old_gods
-	name = "Old Gods"
-	favor = 0
+	whisper_lines = list("Remeber the prayer.", "Verina provides.", "Follow the Arbiters.")
+	offering_items = list(/obj/item/weapon/spacecash/bundle/c10)
 
 /*
 /datum/religion/narsie
@@ -62,6 +68,22 @@ proc/generate_random_prayer()//This generates a new one.
 	set name = "Recite the prayer"
 	say(mind.prayer)
 
+
+//Try to reveal a random heretic
+/mob/living/proc/interrogate()
+	set category = "Deo Machina"
+	set name = "Interrogate"
+	var/list/victims = list()
+	for(var/mob/living/carbon/human/C in oview(1))
+		victims += C
+	var/mob/living/carbon/human/T = input(src, "Who will we interrogate?") as null|anything in victims
+	if(!T) return
+	if(!(T in view(1))) return
+	say("[T] are you a heretic!?")
+	if(prob((T.getHalLoss()/3) - T.stats["con"]))  //Higher con helps your resist torture
+		T.reveal_self()
+		return
+
 //Reveals a random heretic
 /mob/living/proc/reveal_heretics()
 	var/msg = " is one of them!"
@@ -77,41 +99,9 @@ proc/generate_random_prayer()//This generates a new one.
 		else 
 			say("I'm the only one!")
 
-/mob/living/proc/accuse_heretic()
-	set category = "Deo Machina"
-	set name = "Accuse Heretic"
-	var/list/victims = list()
-	for(var/mob/living/carbon/human/C in oview(1))
-		victims += C
-	var/mob/living/carbon/human/T = input(src, "Who will we accuse?") as null|anything in victims
-	if(!T)
-		return
-	say("[T] are you a heretic!?")
-	var/organ_pain = 0
-	for(var/obj/item/organ/external/org in T.organs)
-		organ_pain += org.get_pain() + org.get_damage()
-	if(prob(organ_pain - T.stats["con"]))  //Higher con helps your resist torture
-		T.reveal_self()
-
-/mob/living/proc/question_heretic()
-	set category = "Deo Machina"
-	set name = "Question Heretic"
-	var/list/victims = list()
-	for(var/mob/living/carbon/human/C in oview(1))
-		victims += C
-	var/mob/living/carbon/human/T = input(src, "Who will we question?") as null|anything in victims
-	if(!T)
-		return
-	say("[T], who is working in your cult!")
-	var/organ_pain = 0
-	for(var/obj/item/organ/external/org in T.organs)
-		organ_pain += org.get_pain() + org.get_damage()
-	if(prob(organ_pain - T.stats["con"]))  //Higher con helps your resist torture
-		T.reveal_heretics()
-
 /* ILLEGAL RELIGION PROCS */
 /datum/religion/proc/claim_territory(area/territory,var/claiming_religion)
-	GLOB.all_religions[claiming_religion].territories += territory.name
+	GLOB.all_religions[claiming_religion].territories |= territory.name
 	return
 
 /datum/religion/proc/lose_territory(area/territory,var/claiming_religion)
@@ -123,6 +113,41 @@ proc/generate_random_prayer()//This generates a new one.
 		if(territory.name in GLOB.all_religions[name].territories)
 			return name
 	return null
+
+//This is general, and should be overloaded for ~flavor~
+/datum/religion/proc/generate_random_phrase()
+		var/phrase = pick("Oh great [name] ", "Oh our Lord [name]. ", "[name], our Lord and Saviour. ")
+		phrase += pick("You bathe us in your glow. ", "You bathe our minds in you omniscient wisdom. ", "You bathe our [pick("outpost","kingdom","cities")] in your wealth. ")
+		phrase += pick("[name] be praised. ", "[name] save us all. ", "[name] guide us all. ")
+		phrase += "Amen."
+		return phrase
+
+/datum/religion/proc/whisper_to_followers()
+	var/whisper_line = pick(whisper_lines)
+	for(var/mob/living/carbon/human/player in GLOB.player_list)
+		if(player.religion == name)
+			playsound(player, "sound/effects/badmood[pick(1,4)].ogg",50,1)
+			to_chat(player, "<span class='danger'>[whisper_line]</span>")
+
+//Makes a request, and tells all followers about it
+/datum/religion/proc/request()
+	request = pick(selectable_requests)
+	//request = new request(name)
+	request = new /datum/request/offering/(name)
+	for(var/mob/living/carbon/human/player in GLOB.player_list)
+		if(player.religion == name)
+			playsound(player, "sound/effects/badmood[pick(1,4)].ogg",50,1)
+			to_chat(player, "<span class='danger'>[request.message]</span>")
+
+/datum/religion/proc/reward(var/mob/living/target)
+	var/datum/reward/reward = pick(selectable_rewards)
+	reward = new reward
+	reward.do_reward(target)
+
+/datum/religion/proc/punish(var/mob/living/target)
+	var/datum/punishment/punishment = pick(selectable_punishments)
+	punishment = new punishment
+	punishment.do_punishment(target)
 
 /datum/religion/proc/can_claim_for_gods(mob/user, atom/target)
 	//Check the area for if there's another shrine already, or the arbiters have already claimed it with TODO:?????
@@ -143,10 +168,23 @@ proc/generate_random_prayer()//This generates a new one.
 	// If you pass the gaunlet of checks, you're good to proceed
 	return TRUE
 
+/datum/religion/proc/spawn_item(mob/living/user, var/divisor = 0.1)
+	var/turf/T = get_turf(user)
+	var/datum/religion/user_religion = GLOB.all_religions[user.religion]
+	for(var/obj/old_god_shrine/shrine in view(user, 5))
+		//If we can see an allied shrine nearby, we have more chance to spawn a reward.
+		if(shrine.shrine_religion.name == user_religion.name)
+			divisor = 1
+		if(prob(user_religion.favor * divisor))
+			var/S = pick(GLOB.all_spells)
+			var/reward = pick(GLOB.all_spells[S].requirments)
+			var/obj/reward_obj = GLOB.all_spells[S].requirments[reward]
+				new reward_obj(T)
+
 /mob/living/proc/praise_god()
 	set category = "Old God Magic"
 	set name = "Praise god"
-	var/turf/T = get_turf(src)
+	
 	var/datum/religion/user_religion = GLOB.all_religions[religion]
 	//You need your god's item to do this
 	if(!istype(get_active_hand(), user_religion.holy_item) && !istype(get_inactive_hand(), user_religion.holy_item))
@@ -161,8 +199,13 @@ proc/generate_random_prayer()//This generates a new one.
 		if(do_after(src, timer))
 			//These variables used to just be functions that returned a hard coded value.  So don't blame me, this is actually faster.
 			user_religion.favor += 10
-			playsound(T, praise_sound,50,1)
+			playsound(get_turf(src), praise_sound,50,1)
 			doing_something = 0
+			user_religion.spawn_item(src)
+			if(user_religion.request)
+				if(user_religion.request.check_complete(src))
+					user_religion.reward(src)
+					user_religion.request = null
 			return 1
 		else 
 			to_chat(src, "<span class='notice'>Your prayer is interupted</span>")
@@ -184,17 +227,16 @@ proc/generate_random_prayer()//This generates a new one.
 	if(!istype(get_active_hand(), user_religion.holy_item) && !istype(get_inactive_hand(), user_religion.holy_item))
 		to_chat(src, "<span class='warning'>You can't draw old god runes without your [user_religion.holy_item]!</span>")
 		return
+	//Need 30 favor to make a shrine
+	if(user_religion.favor < 30)
+		to_chat(src, "<span class='warning'>You don't feel devoted enough to your god.</span>")
+		return
 	var/self = "You deftly use your [user_religion.holy_item] to create the shrine."
 	var/timer = 20
 	if(user_religion.can_claim_for_gods(src,T))
 		visible_message("<span class='warning'>\The [src] quickly draws on the floor and begins to whisper quietly to themselves.</span>", "<span class='notice'>[self]</span>", "You hear scratching.")
 		if(do_after(src, timer))
 			//These variables used to just be functions that returned a hard coded value.  So don't blame me, this is actually faster.
-			var/obj/old_god_shrine/S = new user_religion.shrine(T)
-			var/area/A = get_area(S)
-			user_religion.claim_territory(A,user_religion.name)
-			log_and_message_admins("created \an [S.name] rune at \the [A.name] - [loc.x]-[loc.y]-[loc.z].")
-			S.add_fingerprint(src)
+			new user_religion.shrine(T)
 			return 1
 	return 0
-
