@@ -31,7 +31,7 @@
 "aE" = (/obj/machinery/microwave{pixel_x = -1; pixel_y = 2},/obj/structure/table/reinforced,/turf/simulated/floor/tiled/bunker/black,/area/syndicate_station/start)
 "aF" = (/turf/simulated/floor/tiled/bunker/black,/area/syndicate_station/start)
 "aG" = (/obj/structure/bed/chair{dir = 1},/turf/simulated/floor/tiled/bunker/black,/area/syndicate_station/start)
-"aH" = (/obj/structure/table/rack,/obj/item/weapon/gun/projectile/sec,/obj/item/weapon/gun/projectile/sec,/obj/item/weapon/gun/projectile/sec,/obj/item/weapon/gun/projectile/sec/MK,/obj/item/ammo_magazine/c45m/empty,/obj/item/ammo_magazine/c45m/empty,/obj/item/ammo_magazine/c45m/empty,/obj/item/ammo_magazine/c45m/empty,/turf/simulated/floor/tiled/bunker,/area/syndicate_mothership)
+"aH" = (/obj/effect/floor_decal/spline/plain,/obj/structure/table/rack,/obj/item/weapon/gun/projectile/pistol,/obj/item/weapon/gun/projectile/pistol,/obj/item/weapon/gun/projectile/pistol,/obj/item/weapon/gun/projectile/pistol,/obj/item/ammo_magazine/mc9mm,/obj/item/ammo_magazine/mc9mm,/obj/item/ammo_magazine/mc9mm,/obj/item/ammo_magazine/mc9mm,/turf/simulated/floor/tiled/bunker,/area/syndicate_mothership)
 "aI" = (/obj/structure/table/rack,/obj/item/clothing/shoes/magboots,/obj/item/clothing/suit/space/syndicate/black/red,/obj/item/clothing/mask/breath,/obj/item/clothing/head/helmet/space/syndicate/black/red,/obj/effect/floor_decal/spline/plain{tag = "icon-spline_plain (SOUTHWEST)"; icon_state = "spline_plain"; dir = 10},/turf/simulated/floor/tiled/white,/area/syndicate_mothership)
 "aJ" = (/turf/simulated/wall,/area/syndicate_mothership)
 "aK" = (/obj/effect/landmark{name = "Syndicate-Uplink"},/obj/effect/floor_decal/industrial/warning,/turf/simulated/floor/tiled/bunker,/area/syndicate_mothership)
